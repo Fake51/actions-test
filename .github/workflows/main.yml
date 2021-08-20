@@ -44,11 +44,12 @@ jobs:
         run: echo "${{ needs.tag.outputs.name }}"
 
       - name: Tag actual releases as releases
-        if: "contains(github.ref, 'master')"
+        if: "!contains(github.ref, 'master')"
         run: |
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
 
-          git tag "${{ needs.tag.outputs.name }}" -m "Version: ${{ needs.tag.outputs.name }}"
+          git tag "${{ needs.tag.outputs.name }}"
+          git tag -l
           git checkout "${{ needs.tag.outputs.name }}"
           git branch
