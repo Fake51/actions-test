@@ -44,12 +44,12 @@ jobs:
         run: echo "${{ needs.tag.outputs.name }}"
 
       - name: Tag actual releases as releases
-        if: "!contains(github.ref, 'master')"
+        if: "contains(github.ref, 'master')"
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email noreply@github.com
-
-          git tag "${{ needs.tag.outputs.name }}"
-          git tag -l
-          git checkout "${{ needs.tag.outputs.name }}"
-          git branch
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://api.github.com/repos/Fake51/actions-test/git/tags \
+            -d '{"tag":"${{ needs.tag.outputs.name }}","message":"${{ needs.tag.outputs.name }}","object":"${{ github.sha }}","type":"commit"}' \
+            --fail
